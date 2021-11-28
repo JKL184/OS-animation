@@ -185,6 +185,10 @@ class fcfsScenes(pygame.sprite.Sprite):
             "assets/img/fcfs/FCFS-10.jpg"))
         self.sprites.append(pygame.image.load(
             "assets/img/fcfs/FCFS-11.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-11.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-11.jpg"))
         
        
 
@@ -425,7 +429,7 @@ moving_scene.add(sj_scene)
 
 # scenes fcfs
 
-fcfs = fcfsScenes(200, 150)
+fcfs = fcfsScenes(150, 150)
 moving_scene1.add(fcfs)
 
 # scenes priority
