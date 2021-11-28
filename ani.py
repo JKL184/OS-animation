@@ -1,14 +1,18 @@
-import pygame, sys
+import pygame
+import sys
+import os
 
 
 class pointer(pygame.sprite.Sprite):
-    def __init__(self,pic_path):
+    def __init__(self, pic_path):
         super().__init__()
         self.image = pygame.image.load(pic_path)
         self.rect = self.image.get_rect()
-        self.chalktap=pygame.mixer.Sound("assets/tap.mp3")
+        self.chalktap = pygame.mixer.Sound("assets/tap.mp3")
+
     def update(self,):
-        self.rect.center=pygame.mouse.get_pos()
+        self.rect.center = pygame.mouse.get_pos()
+
     def tap(self):
         self.chalktap.play()
 class Interact(pygame.sprite.Sprite):
@@ -26,10 +30,11 @@ class Interact(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center = (x, y))
                     
 class option(pygame.sprite.Sprite):
-    def __init__(self,x,y,pic_path):
+    def __init__(self, x, y, pic_path):
         super().__init__()
         self.image = pygame.image.load(pic_path)
-        self.rect = self.image.get_rect(center = (x, y))
+        self.rect = self.image.get_rect(center=(x, y))
+
 
 class Scenes(pygame.sprite.Sprite):
             def __init__(self, pos_x,pos_y,scenelist,speed):
@@ -55,7 +60,8 @@ class Scenes(pygame.sprite.Sprite):
             
 class GameState():
     def __init__(self):
-        self.state="intro"
+        self.state = "intro"
+
     def intro(self):
         event_list = pygame.event.get()
         for event in event_list:
@@ -63,14 +69,14 @@ class GameState():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key==pygame.K_KP1:
-                    self.state="firstcome"
-                if event.key==pygame.K_KP2:
-                    self.state="shortest_job"
-                if event.key==pygame.K_KP3:
-                    self.state="priority"
-                if event.key==pygame.K_KP4:
-                    self.state="shortest_time"
+                if event.key == pygame.K_KP1:
+                    self.state = "firstcome"
+                if event.key == pygame.K_KP2:
+                    self.state = "shortest_job"
+                if event.key == pygame.K_KP3:
+                    self.state = "priority"
+                if event.key == pygame.K_KP4:
+                    self.state = "shortest_time"
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pointer.tap()
                 pos = pygame.mouse.get_pos()
@@ -110,11 +116,11 @@ class GameState():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pointer.tap()
                 pos = pygame.mouse.get_pos()
-                optlist=[barrow]
+                optlist = [barrow]
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
-                if len(clicked_opts)>0:
-                    if clicked_opts[0]==barrow:
-                        self.state="intro"
+                if len(clicked_opts) > 0:
+                    if clicked_opts[0] == barrow:
+                        self.state = "intro"
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_KP0:
                     self.state="intro"
@@ -306,26 +312,26 @@ class GameState():
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
-                        sj_scene.is_animating=False
+                        pr_scene.is_animating=False
                         self.state="priority"
                     elif clicked_opts[0]==start:
                         start.update(1100,100)
-                        sj_scene.animate()
+                        pr_scene.animate()
                     elif clicked_opts[0]==reset:
-                        sj_scene.current_sprite = 0
-                        sj_scene.image = sj_scene.sprites[sj_scene.current_sprite]
+                        pr_scene.current_sprite = 0
+                        pr_scene.image = pr_scene.sprites[pr_scene.current_sprite]
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_KP0:
                     self.state="priority"
                 if event.key==pygame.K_KP5:
-                    sj_scene.animate()
+                    pr_scene.animate()
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
         start_group.draw(screen)
         screen.blit(priority_text,(400,40))
-        sj_group.draw(screen)
-        sj_group.update()
-        if sj_scene.is_animating==False:
+        pr_group.draw(screen)
+        pr_group.update()
+        if pr_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
@@ -402,7 +408,7 @@ class GameState():
         pygame.display.flip()
 
     def state_manager(self):
-        if self.state=='intro':
+        if self.state == 'intro':
             self.intro()
         if self.state=='process_schedule':
             self.process_info()
@@ -423,10 +429,11 @@ class GameState():
         if self.state=='st_ani':
             self.shortest_time_ani()
 
+
 # General setup
 pygame.init()
 clock = pygame.time.Clock()
-game_state=GameState()
+game_state = GameState()
 # Game Screen
 screen_width =1200
 screen_height =700 
@@ -446,7 +453,7 @@ shortest_time_text=pygame.image.load("stages-images\Anim-05.png")
 select_num=pygame.image.load('stages-images/Anim-06.png')
 pygame.mouse.set_visible(False)
 
-#Pointer
+# Pointer
 pointer = pointer("assets/pointer.png")
 pointer_group = pygame.sprite.Group()
 pointer_group.add(pointer)
@@ -529,6 +536,79 @@ sj_sprites.append(pygame.image.load("SJN\Frame26.png"))
 sj_group = pygame.sprite.Group()        
 sj_scene = Scenes(100,100,sj_sprites,0.0225)
 sj_group.add(sj_scene)
+
+pr_sprites = []
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-1.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-2.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-3.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-4.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-5.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-6.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-7.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-8.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-9.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-10.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-11.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-12.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-13.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-14.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-15.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-16.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-17.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-18.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-19.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-20.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-21.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-22.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-23.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-24.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-25.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-26.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-27.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-28.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-29.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-30.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-31.png"))
+pr_sprites.append(pygame.image.load(
+    "assets/img/priority/scene1-32.png"))
+pr_sprites.append(pygame.image.load("assets/img/priority/scene1-33.png"))
+pr_group = pygame.sprite.Group()        
+pr_scene = Scenes(100,100,pr_sprites,0.0225)
+pr_group.add(pr_scene)
+
 while True:
     game_state.state_manager()
     clock.tick(60)
