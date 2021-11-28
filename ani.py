@@ -181,7 +181,7 @@ class GameState():
                         fc_scene.animate()
                     elif clicked_opts[0]==reset:
                         fc_scene.current_sprite = 0
-                        fc_scene.image = fc_scene.sprites[sj_scene.current_sprite]
+                        fc_scene.image = fc_scene.sprites[fc_scene.current_sprite]
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_KP0:
                     self.state="firstcome"
@@ -193,7 +193,7 @@ class GameState():
         screen.blit(firstcome_text,(400,40))
         fc_group.draw(screen)
         fc_group.update()
-        if sj_scene.is_animating==False:
+        if fc_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
@@ -459,7 +459,7 @@ pointer_group = pygame.sprite.Group()
 pointer_group.add(pointer)
 
 #Navigation
-barrow=option(110,40,"assets/arrow.png")
+barrow=option(110,55,"assets/arrow.png")
 film=option(600,585,"assets/filmc.png")
 arrow_group=pygame.sprite.Group([barrow])
 nav_group=pygame.sprite.Group([barrow,film])
@@ -468,7 +468,7 @@ nav_group=pygame.sprite.Group([barrow,film])
 process_desc=pygame.image.load('assets/process_desc.png')
 fc_desc=pygame.image.load('assets/fc_desc.png')
 sj_desc=pygame.image.load('assets/sj_desc.png')
-pr_desc=pygame.image.load('assets/pr_desc.png')
+pr_desc=pygame.image.load('assets/pr_Desc.png')
 st_desc=pygame.image.load('assets/st_desc.png')
 
 """ Stage options """
@@ -502,7 +502,7 @@ fc_sprites.append(pygame.image.load("fcfsimages\FCFS-09.jpg"))
 fc_sprites.append(pygame.image.load("fcfsimages\FCFS-10.jpg"))
 fc_sprites.append(pygame.image.load("fcfsimages\FCFS-11.jpg"))
 fc_group = pygame.sprite.Group()        
-fc_scene = Scenes(100,150,fc_sprites,0.05)
+fc_scene = Scenes(200,150,fc_sprites,0.01)
 fc_group.add(fc_scene)
 
 #scenes shortest jobs
@@ -534,79 +534,79 @@ sj_sprites.append(pygame.image.load("SJN\Frame24.png"))
 sj_sprites.append(pygame.image.load("SJN\Frame25.png"))
 sj_sprites.append(pygame.image.load("SJN\Frame26.png"))
 sj_group = pygame.sprite.Group()        
-sj_scene = Scenes(100,100,sj_sprites,0.0225)
+sj_scene = Scenes(300,100,sj_sprites,0.0225)
 sj_group.add(sj_scene)
 
 pr_sprites = []
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1.png"))
+    "priority/scene1.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-1.png"))
+    "priority/scene1-1.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-2.png"))
+    "priority/scene1-2.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-3.png"))
+    "priority/scene1-3.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-4.png"))
+    "priority/scene1-4.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-5.png"))
+    "priority/scene1-5.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-6.png"))
+    "priority/scene1-6.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-7.png"))
+    "priority/scene1-7.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-8.png"))
+    "priority/scene1-8.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-9.png"))
+    "priority/scene1-9.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-10.png"))
+    "priority/scene1-10.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-11.png"))
+    "priority/scene1-11.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-12.png"))
+    "priority/scene1-12.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-13.png"))
+    "priority/scene1-13.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-14.png"))
+    "priority/scene1-14.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-15.png"))
+    "priority/scene1-15.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-16.png"))
+    "priority/scene1-16.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-17.png"))
+    "priority/scene1-17.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-18.png"))
+    "priority/scene1-18.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-19.png"))
+    "priority/scene1-19.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-20.png"))
+    "priority/scene1-20.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-21.png"))
+    "priority/scene1-21.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-22.png"))
+    "priority/scene1-22.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-23.png"))
+    "priority/scene1-23.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-24.png"))
+    "priority/scene1-24.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-25.png"))
+    "priority/scene1-25.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-26.png"))
+    "priority/scene1-26.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-27.png"))
+    "priority/scene1-27.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-28.png"))
+    "priority/scene1-28.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-29.png"))
+    "priority/scene1-29.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-30.png"))
+    "priority/scene1-30.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-31.png"))
+    "priority/scene1-31.png"))
 pr_sprites.append(pygame.image.load(
-    "assets/img/priority/scene1-32.png"))
-pr_sprites.append(pygame.image.load("assets/img/priority/scene1-33.png"))
+    "priority/scene1-32.png"))
+pr_sprites.append(pygame.image.load("priority/scene1-33.png"))
 pr_group = pygame.sprite.Group()        
-pr_scene = Scenes(100,100,pr_sprites,0.0225)
+pr_scene = Scenes(200,100,pr_sprites,0.0225)
 pr_group.add(pr_scene)
 
 while True:
