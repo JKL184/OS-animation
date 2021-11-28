@@ -157,6 +157,54 @@ class priorityScenes(pygame.sprite.Sprite):
             self.image = self.sprites[int(self.current_sprite)]
 
 
+
+class fcfsScenes(pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y):
+        super().__init__()
+        self.sprites = []
+        self.is_animating = False
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-01.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-02.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-03.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-04.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-05.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-06.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-07.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-08.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-09.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-10.jpg"))
+        self.sprites.append(pygame.image.load(
+            "assets/img/fcfs/FCFS-11.jpg"))
+        
+       
+
+        self.current_sprite = 0
+        self.image = self.sprites[self.current_sprite]
+        self.rect = self.image.get_rect()
+        self.rect.topleft = [pos_x, pos_y]
+
+    def animate(self):
+        self.is_animating = True
+
+    def update(self):
+        if self.is_animating == True:
+            self.current_sprite += 0.035
+            if self.current_sprite >= len(self.sprites):
+                self.current_sprite = 0
+                self.is_animating = False
+            self.image = self.sprites[int(self.current_sprite)]
+
+
 class GameState():
     def __init__(self):
         self.state = "intro"
@@ -212,14 +260,19 @@ class GameState():
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
                 if len(clicked_opts) > 0:
                     if clicked_opts[0] == barrow:
+                        fcfs.is_animating= False
                         self.state = "intro"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_KP0:
                     self.state = "intro"
+                if event.key == pygame.K_KP1:
+                    fcfs.animate()
 
         screen.blit(bg, (0, 0))
-        screen.blit(firstcome_text, (screen_width/2, screen_height/2))
         arrow_group.draw(screen)
+        screen.blit(firstcome_text, (200, 0))
+        moving_scene1.draw(screen)
+        moving_scene1.update()
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
@@ -255,6 +308,8 @@ class GameState():
         pointer_group.update()
         pygame.display.flip()
 
+    
+    
     def priority(self):
         event_list = pygame.event.get()
         for event in event_list:
@@ -363,9 +418,17 @@ option_group = pygame.sprite.Group([opt1, opt2, opt3, opt4])
 # scenes shortest jobs
 screencenter = (200, 150)
 moving_scene = pygame.sprite.Group()
+moving_scene1 = pygame.sprite.Group()
 moving_scene2 = pygame.sprite.Group()
 sj_scene = sjScenes(100, 150)
 moving_scene.add(sj_scene)
+
+# scenes fcfs
+
+fcfs = fcfsScenes(0, 100)
+moving_scene1.add(fcfs)
+
+# scenes priority
 
 priority = priorityScenes(0, 100)
 moving_scene2.add(priority)
