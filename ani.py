@@ -431,7 +431,7 @@ game_state=GameState()
 screen_width =1200
 screen_height =700 
 screen = pygame.display.set_mode((screen_width, screen_height))
-bg = pygame.image.load("woodboard.jpg")
+bg = pygame.image.load("assets/woodboard.jpg")
 #comp = pygame.image.load("comp.png")
 #chip = pygame.image.load("chip.png")
 
