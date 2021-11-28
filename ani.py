@@ -448,11 +448,11 @@ arrow_group=pygame.sprite.Group([barrow])
 nav_group=pygame.sprite.Group([barrow,film])
 
 #Stage TEXT
-process_desc=pygame.image.load('process_desc.png')
-fc_desc=pygame.image.load('fc_desc.png')
-sj_desc=pygame.image.load('sj_desc.png')
-pr_desc=pygame.image.load('fc_desc.png')
-st_desc=pygame.image.load('fc_desc.png')
+process_desc=pygame.image.load('assets/process_desc.png')
+fc_desc=pygame.image.load('assets/fc_desc.png')
+sj_desc=pygame.image.load('assets/sj_desc.png')
+pr_desc=pygame.image.load('assets/fc_desc.png')
+st_desc=pygame.image.load('assets/fc_desc.png')
 
 """ Stage options """
 #stage select options
@@ -462,8 +462,8 @@ sj=option(200,200,"stages-images/Anim-03.png")
 pr=option(200,250,"stages-images/Anim-04.png")
 st=option(230,300,"stages-images/Anim-05.png")
 option_group=pygame.sprite.Group([proc,fc,sj,pr,st])
-comp=Interact(600,475,"comp.png","comp_on.png")
-chip=Interact(150,475,"chip.png","chip_on.png")
+comp=Interact(600,475,"assets/comp.png","assets/comp_on.png")
+chip=Interact(150,475,"assets/chip.png","assets/chip_on.png")
 interact_group=pygame.sprite.Group([comp,chip])
 
 #In-Stage options
