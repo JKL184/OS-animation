@@ -425,7 +425,7 @@ moving_scene.add(sj_scene)
 
 # scenes fcfs
 
-fcfs = fcfsScenes(0, 100)
+fcfs = fcfsScenes(200, 150)
 moving_scene1.add(fcfs)
 
 # scenes priority
