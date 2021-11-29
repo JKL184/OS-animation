@@ -562,26 +562,26 @@ class GameState():
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
-                        sj_scene.is_animating=False
+                        str_scene.is_animating=False
                         self.state="shortest_time"
                     elif clicked_opts[0]==start:
                         start.update(1100,100)
-                        sj_scene.animate()
+                        str_scene.animate()
                     elif clicked_opts[0]==reset:
-                        sj_scene.current_sprite = 0
-                        sj_scene.image = sj_scene.sprites[sj_scene.current_sprite]
+                        str_scene.current_sprite = 0
+                        str_scene.image = str_scene.sprites[str_scene.current_sprite]
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_KP0:
                     self.state="shortest_time"
                 if event.key==pygame.K_KP5:
-                    sj_scene.animate()
+                    str_scene.animate()
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
         start_group.draw(screen)
         screen.blit(shortest_time_text,(400,40))
-        sj_group.draw(screen)
-        sj_group.update()
-        if sj_scene.is_animating==False:
+        str_group.draw(screen)
+        str_group.update()
+        if str_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
@@ -742,6 +742,40 @@ sj_sprites.append(pygame.image.load("SJN\Frame26.png"))
 sj_group = pygame.sprite.Group()        
 sj_scene = Scenes(300,100,sj_sprites,0.0225)
 sj_group.add(sj_scene)
+
+#shortest time remaining
+str_sprites = []
+str_sprites.append(pygame.image.load("STR\T=0.png"))
+str_sprites.append(pygame.image.load("STR\T=1.png"))
+str_sprites.append(pygame.image.load("STR\T=2.png"))
+str_sprites.append(pygame.image.load("STR\T=3.png"))
+str_sprites.append(pygame.image.load("STR\T=4.png"))
+str_sprites.append(pygame.image.load("STR\T=5.png"))
+str_sprites.append(pygame.image.load("STR\T=6.png"))
+str_sprites.append(pygame.image.load("STR\T=7.png"))
+str_sprites.append(pygame.image.load("STR\T=8.png"))
+str_sprites.append(pygame.image.load("STR\T=9.png"))
+str_sprites.append(pygame.image.load("STR\T=10.png"))
+str_sprites.append(pygame.image.load("STR\T=11.png"))
+str_sprites.append(pygame.image.load("STR\T=12.png"))
+str_sprites.append(pygame.image.load("STR\T=13.png"))
+str_sprites.append(pygame.image.load("STR\T=14.png"))
+str_sprites.append(pygame.image.load("STR\T=15.png"))
+str_sprites.append(pygame.image.load("STR\T=16.png"))
+str_sprites.append(pygame.image.load("STR\T=17.png"))
+str_sprites.append(pygame.image.load("STR\T=18.png"))
+str_sprites.append(pygame.image.load("STR\T=19.png"))
+str_sprites.append(pygame.image.load("STR\T=20.png"))
+str_sprites.append(pygame.image.load("STR\T=21.png"))
+str_sprites.append(pygame.image.load("STR\T=22.png"))
+str_sprites.append(pygame.image.load("STR\T=23.png"))
+str_sprites.append(pygame.image.load("STR\T=24.png"))
+str_sprites.append(pygame.image.load("STR\T=25.png"))
+str_sprites.append(pygame.image.load("STR\T=26.png"))
+str_sprites.append(pygame.image.load("STR\T=27.png"))
+str_group = pygame.sprite.Group()        
+str_scene = Scenes(300,100,str_sprites,0.0225)
+str_group.add(str_scene)
 
 pr_sprites = []
 pr_sprites.append(pygame.image.load(
