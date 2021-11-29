@@ -1,5 +1,7 @@
 import pygame
 import sys
+import numpy as np
+import time
 import os
 
 
@@ -99,8 +101,6 @@ class GameState():
                         chip.update(400,475)
             
         screen.blit(bg,(0,0))
-        #screen.blit(stage_select,(280,30))
-        #screen.blit(select_num,(230,315))
         option_group.draw(screen)
         interact_group.draw(screen)
         pointer_group.draw(screen)
@@ -170,7 +170,7 @@ class GameState():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pointer.tap()
                 pos = pygame.mouse.get_pos()
-                optlist=[barrow,start,reset]
+                optlist=[barrow,start,reset,film]
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
@@ -182,6 +182,8 @@ class GameState():
                     elif clicked_opts[0]==reset:
                         fc_scene.current_sprite = 0
                         fc_scene.image = fc_scene.sprites[fc_scene.current_sprite]
+                    elif clicked_opts[0]==film:
+                        self.state="fc_test"
             if event.type == pygame.KEYDOWN:
                 if event.key==pygame.K_KP0:
                     self.state="firstcome"
@@ -189,6 +191,7 @@ class GameState():
                     fc_scene.animate()
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
+        nav_group.draw(screen)
         start_group.draw(screen)
         screen.blit(firstcome_text,(400,40))
         fc_group.draw(screen)
@@ -202,6 +205,186 @@ class GameState():
         pygame.display.flip()
 
     
+    def first_come_test(self):
+        global arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st,Proc1,Proc2,Proc3,Arr,Exc,P1,P2,P3,b1,b2,b3,b0
+        event_list = pygame.event.get()
+        pos = pygame.mouse.get_pos()
+        
+        global arr1_text,arr2_text,arr3_text,br1_text,br2_text,br3_text
+        numkeys=[pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9,
+        pygame.K_KP0,pygame.K_KP1,pygame.K_KP2,pygame.K_KP3,pygame.K_KP4,pygame.K_KP5,pygame.K_KP6,pygame.K_KP7,
+        pygame.K_KP8,pygame.K_KP9]
+        for event in event_list:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st=False,False,False,False,False,False
+                pointer.tap()
+                optlist=[barrow,start,reset]
+                inlist=[arr1_rect,arr2_rect,arr3_rect,br1_rect,br2_rect,br3_rect]
+                clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
+                input_opts = [s for s in inlist if s.collidepoint(pos)]
+                if len(clicked_opts)>0: 
+                    if clicked_opts[0]==barrow:
+                        self.state="fc_ani"
+                    elif clicked_opts[0]==start:
+                        bar1_rect.w,bar1_rect.h,bar2_rect.w,bar2_rect.h,bar3_rect.w,bar3_rect.h=0,0,0,0,0,0
+                        arr1=int(arr1_text)
+                        arr2=int(arr2_text)
+                        arr3=int(arr3_text)
+                        ardict={"Pr1":arr1,"Pr2":arr2,"Pr3":arr3}
+                        a_order=[k for k, v in sorted(ardict.items(), key=lambda item: item[1])]
+                        br1=int(br1_text)
+                        br2=int(br2_text)
+                        br3=int(br3_text)
+                        brdict={"Pr1":br1,"Pr2":br2,"Pr3":br3}
+                        brecdict={"Pr1":bar1_rect,"Pr2":bar2_rect,"Pr3":bar3_rect}
+                        bar1_rect.x,bar2_rect.x,bar3_rect.x=100,100,100
+                        bar1_rect.h,bar2_rect.h,bar3_rect.h=75,75,75
+                        cm=np.cumsum([brdict[a_order[0]],brdict[a_order[1]],brdict[a_order[2]]])
+                        for b in range(len(a_order)):
+                            if a_order[b]=="Pr1":
+                                b1=str(cm[b])
+                            elif a_order[b]=="Pr2":
+                                b2=str(cm[b])
+                            elif a_order[b]=="Pr3":
+                                b3=str(cm[b])
+                        for a in range(len(a_order)):
+                            if a_order[a] !=a_order[0]:
+                                brecdict[a_order[a]].x=(brecdict[a_order[a-1]].topright)[0]+2
+                            for i in range(brdict[a_order[a]]):
+                                brecdict[a_order[a]].w+=20
+                        P1,P2,P3,b0="P1","P2","P3","0"
+                        
+                    elif clicked_opts[0]==reset:
+                        bar1_rect.w,bar1_rect.h,bar2_rect.w,bar2_rect.h,bar3_rect.w,bar3_rect.h=0,0,0,0,0,0
+                        P1,P2,P3,b1,b2,b3,b0="","","","","","",""
+                        
+                if len(input_opts)>0:
+                    if input_opts[0]==arr1_rect:
+                        arr1_st=True
+                    if input_opts[0]==arr2_rect:
+                        arr2_st=True
+                    if input_opts[0]==arr3_rect:
+                        arr3_st=True
+                    if input_opts[0]==br1_rect:
+                        br1_st=True
+                    if input_opts[0]==br2_rect:
+                        br2_st=True
+                    if input_opts[0]==br3_rect:
+                        br3_st=True   
+            if event.type == pygame.KEYDOWN:
+                if arr1_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            arr1_text=arr1_text[:-1]
+                        elif event.key in numkeys :
+                            if len(arr1_text)<6:
+                                arr1_text+=event.unicode
+                if arr2_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            arr2_text=arr2_text[:-1]
+                        elif event.key in numkeys :
+                            if len(arr2_text)<6:
+                                arr2_text+=event.unicode
+                if arr3_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            arr3_text=arr3_text[:-1]
+                        elif event.key in numkeys :
+                            if len(arr3_text)<6:
+                                arr3_text+=event.unicode
+                if br1_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            br1_text=br1_text[:-1]
+                        elif event.key in numkeys :
+                            if len(br1_text)<6:
+                                br1_text+=event.unicode
+                if br2_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            br2_text=br2_text[:-1]
+                        elif event.key in numkeys :
+                            if len(br2_text)<6:
+                                br2_text+=event.unicode
+                if br3_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            br3_text=br3_text[:-1]
+                        elif event.key in numkeys :
+                            if len(br3_text)<6:
+                                br3_text+=event.unicode
+                
+        screen.blit(bg,(0,0))
+        arrow_group.draw(screen)
+        start_group.draw(screen)
+        
+        pygame.draw.rect(screen, "green",bar1_rect,0)
+        bar1_surface=base_font.render(P1, True, (0,0,0))
+        screen.blit(bar1_surface,(bar1_rect.x+5,bar1_rect.y+5))
+        bar0_exc=base_font.render(b0, True, (255,255,255))
+        screen.blit(bar0_exc,(100,575))
+        bar1_exc=base_font.render(b1, True, (255,255,255))
+        screen.blit(bar1_exc,(bar1_rect.bottomright))
+        pygame.draw.rect(screen, "red",bar2_rect,0)
+        bar2_surface=base_font.render(P2, True, (0,0,0))
+        screen.blit(bar2_surface,(bar2_rect.x+5,bar2_rect.y+5))
+        bar2_exc=base_font.render(b2, True, (255,255,255))
+        screen.blit(bar2_exc,(bar2_rect.bottomright))
+        pygame.draw.rect(screen, "yellow",bar3_rect,0)
+        bar3_surface=base_font.render(P3, True, (0,0,0))
+        screen.blit(bar3_surface,(bar3_rect.x+5,bar3_rect.y+5))
+        bar3_exc=base_font.render(b3, True, (255,255,255))
+        screen.blit(bar3_exc,(bar3_rect.bottomright))
+        screen.blit(firstcome_text,(400,40))
+        arr1_title=base_font.render(Proc1,True,(255,255,255))
+        arr2_title=base_font.render(Proc2,True,(255,255,255))
+        arr3_title=base_font.render(Proc3,True,(255,255,255))
+        arr_title=base_font.render(Arr,True,(255,255,255))
+        exc_title=base_font.render(Exc,True,(255,255,255))
+        screen.blit(arr1_title,(800,300))
+        screen.blit(arr2_title,(800,400))
+        screen.blit(arr3_title,(800,500))
+        screen.blit(arr_title,(900,270))
+        screen.blit(exc_title,(1000,270))
+        if arr1_st:
+            pygame.draw.rect(screen, color_active,arr1_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,arr1_rect, 2)
+        if arr2_st:
+            pygame.draw.rect(screen, color_active,arr2_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,arr2_rect, 2)
+        if arr3_st:
+            pygame.draw.rect(screen, color_active,arr3_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,arr3_rect, 2)
+        if br1_st:
+            pygame.draw.rect(screen, color_active,br1_rect,2)
+        else:
+            pygame.draw.rect(screen, color_passive,br1_rect,2)
+        if br2_st:
+            pygame.draw.rect(screen, color_active,br2_rect,2)
+        else:
+            pygame.draw.rect(screen, color_passive,br2_rect,2)
+        if br3_st:
+            pygame.draw.rect(screen, color_active,br3_rect,2)
+        else:
+            pygame.draw.rect(screen, color_passive,br3_rect,2)
+        arr1_surface=base_font.render(arr1_text, True, (255,255,255))
+        screen.blit(arr1_surface,(arr1_rect.x+5,arr1_rect.y+5))
+        arr2_surface=base_font.render(arr2_text, True, (255,255,255))
+        screen.blit(arr2_surface,(arr2_rect.x+5,arr2_rect.y+5))
+        arr3_surface=base_font.render(arr3_text, True, (255,255,255))
+        screen.blit(arr3_surface,(arr3_rect.x+5,arr3_rect.y+5))
+        br1_surface=base_font.render(br1_text, True, (255,255,255))
+        screen.blit(br1_surface,(br1_rect.x+5,br1_rect.y+5))
+        br2_surface=base_font.render(br2_text, True, (255,255,255))
+        screen.blit(br2_surface,(br2_rect.x+5,br2_rect.y+5))
+        br3_surface=base_font.render(br3_text, True, (255,255,255))
+        screen.blit(br3_surface,(br3_rect.x+5,br3_rect.y+5))
+        
+        pointer_group.draw(screen)
+        pointer_group.update()
+        pygame.display.flip()
+
     def shortest_job_desc(self):
         event_list = pygame.event.get()
         for event in event_list:
@@ -229,7 +412,6 @@ class GameState():
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
-
 
     def shortest_job_ani(self):
         event_list = pygame.event.get()
@@ -416,6 +598,8 @@ class GameState():
             self.first_come_desc()
         if self.state=='fc_ani':
             self.first_come_ani()
+        if self.state=='fc_test':
+            self.first_come_test()
         if self.state=='shortest_job':
             self.shortest_job_desc()
         if self.state=='sj_ani':
@@ -435,14 +619,36 @@ pygame.init()
 clock = pygame.time.Clock()
 game_state = GameState()
 # Game Screen
+
 screen_width =1200
 screen_height =700 
 screen = pygame.display.set_mode((screen_width, screen_height))
 bg = pygame.image.load("assets/woodboard.jpg")
-#comp = pygame.image.load("comp.png")
-#chip = pygame.image.load("chip.png")
+base_font=pygame.font.Font(None,28)
 
 
+
+Proc1="Process 1"
+Proc2="Process 2"
+Proc3="Process 3"
+P1,P2,P3,b0,b1,b2,b3="","","","","","",""
+Arr="Arrival"
+Exc="Execution"
+
+arr1_text, arr2_text, arr3_text , br1_text, br2_text, br3_text ="0","0","0","0","0","0"
+arr1_rect=pygame.Rect(900, 300, 75,32)
+arr2_rect=pygame.Rect(900, 400, 75,32)
+arr3_rect=pygame.Rect(900, 500, 75,32)
+br1_rect=pygame.Rect(1000, 300, 75,32)
+br2_rect=pygame.Rect(1000, 400, 75,32)
+br3_rect=pygame.Rect(1000, 500, 75,32)
+bar1_rect=pygame.Rect(100, 500,0,0)
+bar2_rect=pygame.Rect(100, 500,0,0)
+bar3_rect=pygame.Rect(100, 500,0,0)
+color_active=pygame.Color('lightskyblue3')
+color_passive = pygame.Color('red2')
+color = color_passive
+arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st=False,False,False,False,False,False
 #Game options
 stage_select=pygame.image.load('stages-images/Anim-01.png')
 process_text=pygame.image.load("stages-images/Anim-00.png")
