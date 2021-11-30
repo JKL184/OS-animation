@@ -336,6 +336,7 @@ class GameState():
                 
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
+        start.image=start.original_image
         start_group.draw(screen)
         pygame.draw.rect(screen, "green",bar1_rect,0)
         bar1_surface=base_font.render(P1, True, (0,0,0))
