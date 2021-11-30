@@ -39,7 +39,7 @@ class option(pygame.sprite.Sprite):
 
 
 class Scenes(pygame.sprite.Sprite):
-            def __init__(self, pos_x,pos_y,scenelist,speed):
+            def __init__(self, pos_x,pos_y,scenelist):
                 super().__init__()
                 self.sprites=scenelist
                 self.is_animating = False
@@ -47,14 +47,13 @@ class Scenes(pygame.sprite.Sprite):
                 self.image = self.sprites[self.current_sprite]
                 self.rect = self.image.get_rect()
                 self.rect.topleft = [pos_x, pos_y]
-                self.speed=speed
                 
             def animate(self):
                 self.is_animating = not self.is_animating
             
-            def update(self):
+            def update(self,speed):
                 if self.is_animating == True:
-                    self.current_sprite += self.speed
+                    self.current_sprite += float(speed)
                     if self.current_sprite >= len(self.sprites):
                         self.current_sprite = 0
                         self.is_animating = False
@@ -162,6 +161,7 @@ class GameState():
         pygame.display.flip()
 
     def first_come_ani(self):
+        global speed_st,fc_speed,numkeys
         event_list = pygame.event.get()
         for event in event_list:
             if event.type == pygame.QUIT:
@@ -170,8 +170,11 @@ class GameState():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pointer.tap()
                 pos = pygame.mouse.get_pos()
-                optlist=[barrow,start,reset,film]
+                optlist=[barrow,start,reset,graphc]
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
+                speed_st=False
+                inlist=[speed_rect]
+                input_opts = [s for s in inlist if s.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
                         fc_scene.is_animating=False
@@ -182,38 +185,49 @@ class GameState():
                     elif clicked_opts[0]==reset:
                         fc_scene.current_sprite = 0
                         fc_scene.image = fc_scene.sprites[fc_scene.current_sprite]
-                    elif clicked_opts[0]==film:
-                        self.state="fc_test"
+                    elif clicked_opts[0]==graphc:
+                        self.state="fc_flex"
+                if len(input_opts)>0:
+                    if input_opts[0]==speed_rect:
+                        speed_st=True
             if event.type == pygame.KEYDOWN:
-                if event.key==pygame.K_KP0:
-                    self.state="firstcome"
-                if event.key==pygame.K_KP5:
-                    fc_scene.animate()
+                if speed_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            fc_speed=fc_speed[:-1]
+                        elif event.key in numkeys or event.key in [pygame.K_PERIOD,pygame.K_KP_PERIOD]:
+                            if len(arr1_text)<6:
+                                fc_speed+=event.unicode
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
-        nav_group.draw(screen)
+        graph_group.draw(screen)
         start_group.draw(screen)
         screen.blit(firstcome_text,(400,40))
         fc_group.draw(screen)
-        fc_group.update()
+        fc_group.update(fc_speed)
         if fc_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
+        if speed_st:
+            pygame.draw.rect(screen, color_active,speed_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,speed_rect, 2)
+        fcspeed_surface=base_font.render(fc_speed, True, (255,255,255))
+        screen.blit(fcspeed_surface,(speed_rect.x+5,speed_rect.y+5))
+        spd_title=base_font.render(Spd,True,(255,255,255))
+        screen.blit(spd_title,(980,205))
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
 
     
-    def first_come_test(self):
-        global arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st,Proc1,Proc2,Proc3,Arr,Exc,P1,P2,P3,b1,b2,b3,b0
+    def first_come_flex(self):
+        global arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st,Proc1,Proc2,Proc3,Arr,Exc,P1,P2,P3,b1,b2,b3,b0,numkeys
         event_list = pygame.event.get()
         pos = pygame.mouse.get_pos()
         
         global arr1_text,arr2_text,arr3_text,br1_text,br2_text,br3_text
-        numkeys=[pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9,
-        pygame.K_KP0,pygame.K_KP1,pygame.K_KP2,pygame.K_KP3,pygame.K_KP4,pygame.K_KP5,pygame.K_KP6,pygame.K_KP7,
-        pygame.K_KP8,pygame.K_KP9]
+        
         for event in event_list:
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -254,9 +268,17 @@ class GameState():
                             if a_order[a] !=a_order[0]:
                                 brecdict[a_order[a]].x=(brecdict[a_order[a-1]].topright)[0]+2
                             for i in range(brdict[a_order[a]]):
-                                brecdict[a_order[a]].w+=20
+                                brecdict[a_order[a]].w+=30
                         P1,P2,P3,b0="P1","P2","P3","0"
-                        
+                        if br1==0:
+                            P1=""
+                            b1=""
+                        if br2==0:
+                            P2=""
+                            b2=""
+                        if br3==0:
+                            P3=""
+                            b3=""
                     elif clicked_opts[0]==reset:
                         bar1_rect.w,bar1_rect.h,bar2_rect.w,bar2_rect.h,bar3_rect.w,bar3_rect.h=0,0,0,0,0,0
                         P1,P2,P3,b1,b2,b3,b0="","","","","","",""
@@ -315,7 +337,6 @@ class GameState():
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
         start_group.draw(screen)
-        
         pygame.draw.rect(screen, "green",bar1_rect,0)
         bar1_surface=base_font.render(P1, True, (0,0,0))
         screen.blit(bar1_surface,(bar1_rect.x+5,bar1_rect.y+5))
@@ -339,11 +360,11 @@ class GameState():
         arr3_title=base_font.render(Proc3,True,(255,255,255))
         arr_title=base_font.render(Arr,True,(255,255,255))
         exc_title=base_font.render(Exc,True,(255,255,255))
-        screen.blit(arr1_title,(800,300))
-        screen.blit(arr2_title,(800,400))
-        screen.blit(arr3_title,(800,500))
-        screen.blit(arr_title,(900,270))
-        screen.blit(exc_title,(1000,270))
+        screen.blit(arr1_title,(300,230))
+        screen.blit(arr2_title,(300,330))
+        screen.blit(arr3_title,(300,430))
+        screen.blit(arr_title,(400,200))
+        screen.blit(exc_title,(550,200))
         if arr1_st:
             pygame.draw.rect(screen, color_active,arr1_rect, 2)
         else:
@@ -380,7 +401,6 @@ class GameState():
         screen.blit(br2_surface,(br2_rect.x+5,br2_rect.y+5))
         br3_surface=base_font.render(br3_text, True, (255,255,255))
         screen.blit(br3_surface,(br3_rect.x+5,br3_rect.y+5))
-        
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
@@ -414,6 +434,7 @@ class GameState():
         pygame.display.flip()
 
     def shortest_job_ani(self):
+        global speed_st,sj_speed,numkeys
         event_list = pygame.event.get()
         for event in event_list:
             if event.type == pygame.QUIT:
@@ -424,6 +445,9 @@ class GameState():
                 pos = pygame.mouse.get_pos()
                 optlist=[barrow,start,reset]
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
+                speed_st=False
+                inlist=[speed_rect]
+                input_opts = [s for s in inlist if s.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
                         sj_scene.is_animating=False
@@ -434,21 +458,34 @@ class GameState():
                     elif clicked_opts[0]==reset:
                         sj_scene.current_sprite = 0
                         sj_scene.image = sj_scene.sprites[sj_scene.current_sprite]
+                if len(input_opts)>0:
+                    if input_opts[0]==speed_rect:
+                        speed_st=True
             if event.type == pygame.KEYDOWN:
-                if event.key==pygame.K_KP0:
-                    self.state="shortest_job"
-                if event.key==pygame.K_KP5:
-                    sj_scene.animate()
+                if speed_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            sj_speed=sj_speed[:-1]
+                        elif event.key in numkeys or event.key in [pygame.K_PERIOD,pygame.K_KP_PERIOD]:
+                            if len(arr1_text)<6:
+                                sj_speed+=event.unicode
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
         start_group.draw(screen)
         screen.blit(shortest_job_text,(400,40))
         sj_group.draw(screen)
-        sj_group.update()
+        sj_group.update(sj_speed)
         if sj_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
+        if speed_st:
+            pygame.draw.rect(screen, color_active,speed_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,speed_rect, 2)
+        sjspeed_surface=base_font.render(sj_speed, True, (255,255,255))
+        screen.blit(sjspeed_surface,(speed_rect.x+5,speed_rect.y+5))
+        spd_title=base_font.render(Spd,True,(255,255,255))
+        screen.blit(spd_title,(980,205))
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
@@ -482,6 +519,7 @@ class GameState():
         pygame.display.flip()
 
     def priority_ani(self):
+        global speed_st,pr_speed,numkeys
         event_list = pygame.event.get()
         for event in event_list:
             if event.type == pygame.QUIT:
@@ -492,6 +530,9 @@ class GameState():
                 pos = pygame.mouse.get_pos()
                 optlist=[barrow,start,reset]
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
+                speed_st=False
+                inlist=[speed_rect]
+                input_opts = [s for s in inlist if s.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
                         pr_scene.is_animating=False
@@ -502,21 +543,34 @@ class GameState():
                     elif clicked_opts[0]==reset:
                         pr_scene.current_sprite = 0
                         pr_scene.image = pr_scene.sprites[pr_scene.current_sprite]
+                if len(input_opts)>0:
+                    if input_opts[0]==speed_rect:
+                        speed_st=True
             if event.type == pygame.KEYDOWN:
-                if event.key==pygame.K_KP0:
-                    self.state="priority"
-                if event.key==pygame.K_KP5:
-                    pr_scene.animate()
+                if speed_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            pr_speed=pr_speed[:-1]
+                        elif event.key in numkeys or event.key in [pygame.K_PERIOD,pygame.K_KP_PERIOD]:
+                            if len(arr1_text)<6:
+                                pr_speed+=event.unicode
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
         start_group.draw(screen)
         screen.blit(priority_text,(400,40))
         pr_group.draw(screen)
-        pr_group.update()
+        pr_group.update(pr_speed)
         if pr_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
+        if speed_st:
+            pygame.draw.rect(screen, color_active,speed_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,speed_rect, 2)
+        prspeed_surface=base_font.render(pr_speed, True, (255,255,255))
+        screen.blit(prspeed_surface,(speed_rect.x+5,speed_rect.y+5))
+        spd_title=base_font.render(Spd,True,(255,255,255))
+        screen.blit(spd_title,(980,205))
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
@@ -550,6 +604,7 @@ class GameState():
         pygame.display.flip()
     
     def shortest_time_ani(self):
+        global speed_st,st_speed,numkeys
         event_list = pygame.event.get()
         for event in event_list:
             if event.type == pygame.QUIT:
@@ -560,31 +615,47 @@ class GameState():
                 pos = pygame.mouse.get_pos()
                 optlist=[barrow,start,reset]
                 clicked_opts = [s for s in optlist if s.rect.collidepoint(pos)]
+                speed_st=False
+                inlist=[speed_rect]
+                input_opts = [s for s in inlist if s.collidepoint(pos)]
                 if len(clicked_opts)>0: 
                     if clicked_opts[0]==barrow:
-                        sj_scene.is_animating=False
+                        st_scene.is_animating=False
                         self.state="shortest_time"
                     elif clicked_opts[0]==start:
                         start.update(1100,100)
-                        sj_scene.animate()
+                        st_scene.animate()
                     elif clicked_opts[0]==reset:
-                        sj_scene.current_sprite = 0
-                        sj_scene.image = sj_scene.sprites[sj_scene.current_sprite]
+                        st_scene.current_sprite = 0
+                        st_scene.image = st_scene.sprites[st_scene.current_sprite]
+                if len(input_opts)>0:
+                    if input_opts[0]==speed_rect:
+                        speed_st=True
             if event.type == pygame.KEYDOWN:
-                if event.key==pygame.K_KP0:
-                    self.state="shortest_time"
-                if event.key==pygame.K_KP5:
-                    sj_scene.animate()
+                if speed_st:
+                        if event.key == pygame.K_BACKSPACE:
+                            st_speed=st_speed[:-1]
+                        elif event.key in numkeys or event.key in [pygame.K_PERIOD,pygame.K_KP_PERIOD]:
+                            if len(arr1_text)<6:
+                                st_speed+=event.unicode
         screen.blit(bg,(0,0))
         arrow_group.draw(screen)
         start_group.draw(screen)
         screen.blit(shortest_time_text,(400,40))
-        sj_group.draw(screen)
-        sj_group.update()
-        if sj_scene.is_animating==False:
+        st_group.draw(screen)
+        st_group.update(st_speed)
+        if st_scene.is_animating==False:
             start.image=start.original_image
         else:
             start.image=start.click_image
+        if speed_st:
+            pygame.draw.rect(screen, color_active,speed_rect, 2)
+        else:
+            pygame.draw.rect(screen, color_passive,speed_rect, 2)
+        stspeed_surface=base_font.render(st_speed, True, (255,255,255))
+        screen.blit(stspeed_surface,(speed_rect.x+5,speed_rect.y+5))
+        spd_title=base_font.render(Spd,True,(255,255,255))
+        screen.blit(spd_title,(980,205))
         pointer_group.draw(screen)
         pointer_group.update()
         pygame.display.flip()
@@ -598,8 +669,8 @@ class GameState():
             self.first_come_desc()
         if self.state=='fc_ani':
             self.first_come_ani()
-        if self.state=='fc_test':
-            self.first_come_test()
+        if self.state=='fc_flex':
+            self.first_come_flex()
         if self.state=='shortest_job':
             self.shortest_job_desc()
         if self.state=='sj_ani':
@@ -626,7 +697,9 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 bg = pygame.image.load("assets/woodboard.jpg")
 base_font=pygame.font.Font(None,28)
 
-
+numkeys=[pygame.K_0,pygame.K_1,pygame.K_2,pygame.K_3,pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9,
+        pygame.K_KP0,pygame.K_KP1,pygame.K_KP2,pygame.K_KP3,pygame.K_KP4,pygame.K_KP5,pygame.K_KP6,pygame.K_KP7,
+        pygame.K_KP8,pygame.K_KP9]
 
 Proc1="Process 1"
 Proc2="Process 2"
@@ -634,21 +707,26 @@ Proc3="Process 3"
 P1,P2,P3,b0,b1,b2,b3="","","","","","",""
 Arr="Arrival"
 Exc="Execution"
+Spd="Speed"
+
 
 arr1_text, arr2_text, arr3_text , br1_text, br2_text, br3_text ="0","0","0","0","0","0"
-arr1_rect=pygame.Rect(900, 300, 75,32)
-arr2_rect=pygame.Rect(900, 400, 75,32)
-arr3_rect=pygame.Rect(900, 500, 75,32)
-br1_rect=pygame.Rect(1000, 300, 75,32)
-br2_rect=pygame.Rect(1000, 400, 75,32)
-br3_rect=pygame.Rect(1000, 500, 75,32)
+fc_speed,sj_speed,pr_speed,st_speed="0.01","0.0225","0.0225","0.0225"
+speed_rect=pygame.Rect(1050, 200, 80,32)
+arr1_rect=pygame.Rect(400, 230, 75,32)
+arr2_rect=pygame.Rect(400, 330, 75,32)
+arr3_rect=pygame.Rect(400, 430, 75,32)
+br1_rect=pygame.Rect(550, 230, 75,32)
+br2_rect=pygame.Rect(550, 330, 75,32)
+br3_rect=pygame.Rect(550, 430, 75,32)
 bar1_rect=pygame.Rect(100, 500,0,0)
 bar2_rect=pygame.Rect(100, 500,0,0)
 bar3_rect=pygame.Rect(100, 500,0,0)
 color_active=pygame.Color('lightskyblue3')
 color_passive = pygame.Color('red2')
 color = color_passive
-arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st=False,False,False,False,False,False
+arr1_st,arr2_st,arr3_st,br1_st,br2_st,br3_st,speed_st=False,False,False,False,False,False,False
+
 #Game options
 stage_select=pygame.image.load('stages-images/Anim-01.png')
 process_text=pygame.image.load("stages-images/Anim-00.png")
@@ -667,6 +745,8 @@ pointer_group.add(pointer)
 #Navigation
 barrow=option(110,55,"assets/arrow.png")
 film=option(600,585,"assets/filmc.png")
+graphc=option(1030,385,"assets/graph_c.png")
+graph_group=pygame.sprite.Group([graphc])
 arrow_group=pygame.sprite.Group([barrow])
 nav_group=pygame.sprite.Group([barrow,film])
 
@@ -708,10 +788,10 @@ fc_sprites.append(pygame.image.load("fcfsimages\FCFS-09.jpg"))
 fc_sprites.append(pygame.image.load("fcfsimages\FCFS-10.jpg"))
 fc_sprites.append(pygame.image.load("fcfsimages\FCFS-11.jpg"))
 fc_group = pygame.sprite.Group()        
-fc_scene = Scenes(200,150,fc_sprites,0.01)
+fc_scene = Scenes(200,150,fc_sprites)
 fc_group.add(fc_scene)
 
-#scenes shortest jobs
+#scenes for shortest jobs animation
 sj_sprites = []
 sj_sprites.append(pygame.image.load("SJN\Frame1.png"))
 sj_sprites.append(pygame.image.load("SJN\Frame2.png"))
@@ -740,9 +820,10 @@ sj_sprites.append(pygame.image.load("SJN\Frame24.png"))
 sj_sprites.append(pygame.image.load("SJN\Frame25.png"))
 sj_sprites.append(pygame.image.load("SJN\Frame26.png"))
 sj_group = pygame.sprite.Group()        
-sj_scene = Scenes(300,100,sj_sprites,0.0225)
+sj_scene = Scenes(300,100,sj_sprites)
 sj_group.add(sj_scene)
 
+#scenes for priority anim
 pr_sprites = []
 pr_sprites.append(pygame.image.load(
     "priority/scene1.png"))
@@ -812,8 +893,42 @@ pr_sprites.append(pygame.image.load(
     "priority/scene1-32.png"))
 pr_sprites.append(pygame.image.load("priority/scene1-33.png"))
 pr_group = pygame.sprite.Group()        
-pr_scene = Scenes(200,100,pr_sprites,0.0225)
+pr_scene = Scenes(200,100,pr_sprites)
 pr_group.add(pr_scene)
+
+
+#scenes for shortest time remaining anim
+st_sprites = []
+st_sprites.append(pygame.image.load("STR\T=1.png"))
+st_sprites.append(pygame.image.load("STR\T=2.png"))
+st_sprites.append(pygame.image.load("STR\T=3.png"))
+st_sprites.append(pygame.image.load("STR\T=4.png"))
+st_sprites.append(pygame.image.load("STR\T=5.png"))
+st_sprites.append(pygame.image.load("STR\T=6.png"))
+st_sprites.append(pygame.image.load("STR\T=7.png"))
+st_sprites.append(pygame.image.load("STR\T=8.png"))
+st_sprites.append(pygame.image.load("STR\T=9.png"))
+st_sprites.append(pygame.image.load("STR\T=10.png"))
+st_sprites.append(pygame.image.load("STR\T=11.png"))
+st_sprites.append(pygame.image.load("STR\T=12.png"))
+st_sprites.append(pygame.image.load("STR\T=13.png"))
+st_sprites.append(pygame.image.load("STR\T=14.png"))
+st_sprites.append(pygame.image.load("STR\T=15.png"))
+st_sprites.append(pygame.image.load("STR\T=16.png"))
+st_sprites.append(pygame.image.load("STR\T=17.png"))
+st_sprites.append(pygame.image.load("STR\T=18.png"))
+st_sprites.append(pygame.image.load("STR\T=19.png"))
+st_sprites.append(pygame.image.load("STR\T=20.png"))
+st_sprites.append(pygame.image.load("STR\T=21.png"))
+st_sprites.append(pygame.image.load("STR\T=22.png"))
+st_sprites.append(pygame.image.load("STR\T=23.png"))
+st_sprites.append(pygame.image.load("STR\T=24.png"))
+st_sprites.append(pygame.image.load("STR\T=25.png"))
+st_sprites.append(pygame.image.load("STR\T=26.png"))
+st_sprites.append(pygame.image.load("STR\T=27.png"))
+st_group = pygame.sprite.Group()        
+st_scene = Scenes(300,100,st_sprites)
+st_group.add(st_scene)
 
 while True:
     game_state.state_manager()
